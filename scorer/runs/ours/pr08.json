@@ -1,0 +1,28 @@
+[
+  {
+    "id": "F1",
+    "category": "bug",
+    "severity": "med",
+    "file": "taskboard/export.py",
+    "line": 22,
+    "claim": "manual CSV join breaks commas",
+    "test_file": "review_tests/test_F1.py",
+    "test_status": "FAIL",
+    "test_output": "assert / error reproduced\n1 failed",
+    "fix_diff": "- buggy\n+ fixed",
+    "ticket_ref": null
+  },
+  {
+    "id": "F2",
+    "category": "style",
+    "severity": "low",
+    "file": "taskboard/export.py",
+    "line": 29,
+    "claim": "print() in library",
+    "test_file": "review_tests/test_F2.py",
+    "test_status": "FAIL",
+    "test_output": "AssertionError: style rule violated\n1 failed",
+    "fix_diff": "- violation\n+ compliant",
+    "ticket_ref": null
+  }
+]

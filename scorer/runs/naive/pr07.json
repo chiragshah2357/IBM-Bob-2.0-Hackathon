@@ -1,0 +1,28 @@
+[
+  {
+    "id": "N1",
+    "category": "security",
+    "severity": "high",
+    "file": "taskboard/config.py",
+    "line": 9,
+    "claim": "hard-coded fallback token",
+    "test_file": "",
+    "test_status": "not_run",
+    "test_output": "",
+    "fix_diff": null,
+    "ticket_ref": null
+  },
+  {
+    "id": "NF10",
+    "category": "style",
+    "severity": "low",
+    "file": "taskboard/_review_nit.py",
+    "line": 30,
+    "claim": "suspected issue",
+    "test_file": "",
+    "test_status": "not_run",
+    "test_output": "",
+    "fix_diff": null,
+    "ticket_ref": null
+  }
+]

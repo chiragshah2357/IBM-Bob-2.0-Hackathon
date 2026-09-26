@@ -1,0 +1,28 @@
+[
+  {
+    "id": "B1",
+    "category": "style",
+    "severity": "low",
+    "file": "taskboard/service.py",
+    "line": 70,
+    "claim": "camelCase completeAllWithTag",
+    "test_file": "",
+    "test_status": "not_run",
+    "test_output": "",
+    "fix_diff": null,
+    "ticket_ref": null
+  },
+  {
+    "id": "B2",
+    "category": "style",
+    "severity": "low",
+    "file": "taskboard/service.py",
+    "line": 76,
+    "claim": "bare except: pass",
+    "test_file": "",
+    "test_status": "not_run",
+    "test_output": "",
+    "fix_diff": null,
+    "ticket_ref": null
+  }
+]

@@ -1,0 +1,28 @@
+[
+  {
+    "id": "B1",
+    "category": "bug",
+    "severity": "med",
+    "file": "taskboard/service.py",
+    "line": 44,
+    "claim": "<= includes tasks due today",
+    "test_file": "",
+    "test_status": "not_run",
+    "test_output": "",
+    "fix_diff": null,
+    "ticket_ref": null
+  },
+  {
+    "id": "B2",
+    "category": "spec",
+    "severity": "med",
+    "file": "taskboard/service.py",
+    "line": 44,
+    "claim": "done tasks not excluded",
+    "test_file": "",
+    "test_status": "not_run",
+    "test_output": "",
+    "fix_diff": null,
+    "ticket_ref": null
+  }
+]

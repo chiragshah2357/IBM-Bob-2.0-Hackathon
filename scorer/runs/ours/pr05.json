@@ -1,0 +1,41 @@
+[
+  {
+    "id": "F1",
+    "category": "bug",
+    "severity": "med",
+    "file": "taskboard/service.py",
+    "line": 40,
+    "claim": "case-variant dup tag",
+    "test_file": "review_tests/test_F1.py",
+    "test_status": "FAIL",
+    "test_output": "assert / error reproduced\n1 failed",
+    "fix_diff": "- buggy\n+ fixed",
+    "ticket_ref": null
+  },
+  {
+    "id": "F2",
+    "category": "spec",
+    "severity": "med",
+    "file": "taskboard/service.py",
+    "line": 49,
+    "claim": "remove_tag case-sensitive",
+    "test_file": "review_tests/test_F2.py",
+    "test_status": "FAIL",
+    "test_output": "assert mismatch vs spec\n1 failed",
+    "fix_diff": "- wrong\n+ per spec",
+    "ticket_ref": null
+  },
+  {
+    "id": "F3",
+    "category": "style",
+    "severity": "low",
+    "file": "taskboard/_review_nit.py",
+    "line": 1,
+    "claim": "minor naming nit",
+    "test_file": "review_tests/test_F3.py",
+    "test_status": "FAIL",
+    "test_output": "AssertionError\n1 failed",
+    "fix_diff": null,
+    "ticket_ref": null
+  }
+]

@@ -1,0 +1,28 @@
+[
+  {
+    "id": "F1",
+    "category": "security",
+    "severity": "high",
+    "file": "taskboard/config.py",
+    "line": 9,
+    "claim": "hard-coded fallback token",
+    "test_file": "review_tests/test_F1.py",
+    "test_status": "FAIL",
+    "test_output": "AssertionError / injection reproduced\n1 failed",
+    "fix_diff": "- insecure line\n+ safe line",
+    "ticket_ref": null
+  },
+  {
+    "id": "F2",
+    "category": "spec",
+    "severity": "med",
+    "file": "taskboard/config.py",
+    "line": 11,
+    "claim": "missing token not RuntimeError",
+    "test_file": "review_tests/test_F2.py",
+    "test_status": "FAIL",
+    "test_output": "assert mismatch vs spec\n1 failed",
+    "fix_diff": "- wrong\n+ per spec",
+    "ticket_ref": null
+  }
+]

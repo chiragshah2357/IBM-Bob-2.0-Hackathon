@@ -1,0 +1,15 @@
+[
+  {
+    "id": "F1",
+    "category": "bug",
+    "severity": "high",
+    "file": "taskboard/storage.py",
+    "line": 96,
+    "claim": "offset = page*size, page 1 skips",
+    "test_file": "review_tests/test_F1.py",
+    "test_status": "FAIL",
+    "test_output": "assert / error reproduced\n1 failed",
+    "fix_diff": "- buggy\n+ fixed",
+    "ticket_ref": null
+  }
+]

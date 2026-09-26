@@ -1,0 +1,28 @@
+[
+  {
+    "id": "B1",
+    "category": "bug",
+    "severity": "med",
+    "file": "taskboard/export.py",
+    "line": 22,
+    "claim": "manual CSV join breaks commas",
+    "test_file": "",
+    "test_status": "not_run",
+    "test_output": "",
+    "fix_diff": null,
+    "ticket_ref": null
+  },
+  {
+    "id": "B2",
+    "category": "style",
+    "severity": "low",
+    "file": "taskboard/export.py",
+    "line": 29,
+    "claim": "print() in library",
+    "test_file": "",
+    "test_status": "not_run",
+    "test_output": "",
+    "fix_diff": null,
+    "ticket_ref": null
+  }
+]

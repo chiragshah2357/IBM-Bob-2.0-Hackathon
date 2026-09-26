@@ -1,0 +1,286 @@
+{
+  "repo": "github.com/chiragshah2357/IBM-Bob-Hackathon-TestCases",
+  "severity_weight": {
+    "high": 3,
+    "med": 2,
+    "low": 1
+  },
+  "match_rule": "a finding matches a planted issue when same file AND (|line-diff|<=8 OR same category); each planted issue matched at most once",
+  "prs": {
+    "01": {
+      "title": "Search tasks",
+      "size": "S",
+      "clean": false,
+      "planted": [
+        {
+          "id": "P1",
+          "category": "security",
+          "severity": "high",
+          "file": "taskboard/storage.py",
+          "line": 71,
+          "summary": "SQL built with f-string (injection)"
+        },
+        {
+          "id": "P2",
+          "category": "spec",
+          "severity": "med",
+          "file": "taskboard/storage.py",
+          "line": 73,
+          "summary": "results ordered by title, not id"
+        }
+      ],
+      "desc": "Add case-insensitive title search with optional tag and status filters.",
+      "branch": "feat/search-tasks"
+    },
+    "02": {
+      "title": "Overdue and due-soon tasks",
+      "size": "M",
+      "clean": false,
+      "planted": [
+        {
+          "id": "P1",
+          "category": "bug",
+          "severity": "med",
+          "file": "taskboard/service.py",
+          "line": 44,
+          "summary": "<= includes tasks due today"
+        },
+        {
+          "id": "P2",
+          "category": "spec",
+          "severity": "med",
+          "file": "taskboard/service.py",
+          "line": 44,
+          "summary": "done tasks not excluded"
+        }
+      ],
+      "desc": "Surface overdue and due-soon tasks, plus a formatted overdue report.",
+      "branch": "feat/overdue-tasks"
+    },
+    "03": {
+      "title": "Priority management",
+      "size": "M",
+      "clean": false,
+      "planted": [
+        {
+          "id": "P1",
+          "category": "bug",
+          "severity": "med",
+          "file": "taskboard/service.py",
+          "line": 26,
+          "summary": "< MAX rejects priority 5"
+        },
+        {
+          "id": "P2",
+          "category": "coverage",
+          "severity": "low",
+          "file": "tests/test_priority.py",
+          "line": 1,
+          "summary": "no boundary-5 test"
+        }
+      ],
+      "desc": "Validate priority (1-5) and add set / bump / list-by-priority helpers.",
+      "branch": "feat/priority-validation"
+    },
+    "04": {
+      "title": "Board statistics",
+      "size": "M",
+      "clean": false,
+      "planted": [
+        {
+          "id": "P1",
+          "category": "bug",
+          "severity": "high",
+          "file": "taskboard/service.py",
+          "line": 58,
+          "summary": "ZeroDivision on empty board"
+        },
+        {
+          "id": "P2",
+          "category": "coverage",
+          "severity": "low",
+          "file": "tests/test_stats.py",
+          "line": 1,
+          "summary": "no empty-board test"
+        }
+      ],
+      "desc": "Board statistics: completion rate and a per-priority breakdown.",
+      "branch": "feat/completion-rate"
+    },
+    "05": {
+      "title": "Tag management",
+      "size": "S",
+      "clean": false,
+      "planted": [
+        {
+          "id": "P1",
+          "category": "bug",
+          "severity": "med",
+          "file": "taskboard/service.py",
+          "line": 40,
+          "summary": "case-variant dup tag"
+        },
+        {
+          "id": "P2",
+          "category": "spec",
+          "severity": "med",
+          "file": "taskboard/service.py",
+          "line": 49,
+          "summary": "remove_tag case-sensitive"
+        }
+      ],
+      "desc": "Full tag management: normalize, add, remove, list, filter by tag.",
+      "branch": "feat/add-tag"
+    },
+    "06": {
+      "title": "Delete tasks",
+      "size": "S",
+      "clean": false,
+      "planted": [
+        {
+          "id": "P1",
+          "category": "spec",
+          "severity": "med",
+          "file": "taskboard/storage.py",
+          "line": 80,
+          "summary": "missing id fails silently"
+        },
+        {
+          "id": "P2",
+          "category": "coverage",
+          "severity": "low",
+          "file": "tests/test_delete.py",
+          "line": 1,
+          "summary": "no missing-id test"
+        }
+      ],
+      "desc": "Delete a task by id and bulk-delete completed tasks.",
+      "branch": "feat/delete-task"
+    },
+    "07": {
+      "title": "Settings from environment",
+      "size": "M",
+      "clean": false,
+      "planted": [
+        {
+          "id": "P1",
+          "category": "security",
+          "severity": "high",
+          "file": "taskboard/config.py",
+          "line": 9,
+          "summary": "hard-coded fallback token"
+        },
+        {
+          "id": "P2",
+          "category": "spec",
+          "severity": "med",
+          "file": "taskboard/config.py",
+          "line": 11,
+          "summary": "missing token not RuntimeError"
+        }
+      ],
+      "desc": "Load settings from environment; require an export token.",
+      "branch": "feat/export-token-config"
+    },
+    "08": {
+      "title": "Export tasks",
+      "size": "S",
+      "clean": false,
+      "planted": [
+        {
+          "id": "P1",
+          "category": "bug",
+          "severity": "med",
+          "file": "taskboard/export.py",
+          "line": 22,
+          "summary": "manual CSV join breaks commas"
+        },
+        {
+          "id": "P2",
+          "category": "style",
+          "severity": "low",
+          "file": "taskboard/export.py",
+          "line": 29,
+          "summary": "print() in library"
+        }
+      ],
+      "desc": "Export tasks to CSV and JSON for spreadsheets and tooling.",
+      "branch": "feat/export-csv"
+    },
+    "09": {
+      "title": "Task summaries and table view",
+      "size": "L",
+      "clean": true,
+      "planted": [],
+      "desc": "Human-readable task summary and a plain-text table view.",
+      "branch": "feat/task-summary"
+    },
+    "10": {
+      "title": "Paginate task list",
+      "size": "L",
+      "clean": false,
+      "planted": [
+        {
+          "id": "P1",
+          "category": "bug",
+          "severity": "high",
+          "file": "taskboard/storage.py",
+          "line": 96,
+          "summary": "offset = page*size, page 1 skips"
+        },
+        {
+          "id": "P2",
+          "category": "spec",
+          "severity": "med",
+          "file": "taskboard/storage.py",
+          "line": 92,
+          "summary": "page_size>100 not rejected"
+        }
+      ],
+      "desc": "Paginate the task list with 1-indexed pages and totals.",
+      "branch": "feat/pagination"
+    },
+    "11": {
+      "title": "Bulk status changes",
+      "size": "L",
+      "clean": false,
+      "planted": [
+        {
+          "id": "P1",
+          "category": "style",
+          "severity": "low",
+          "file": "taskboard/service.py",
+          "line": 70,
+          "summary": "camelCase completeAllWithTag"
+        },
+        {
+          "id": "P2",
+          "category": "style",
+          "severity": "low",
+          "file": "taskboard/service.py",
+          "line": 76,
+          "summary": "bare except: pass"
+        },
+        {
+          "id": "P3",
+          "category": "style",
+          "severity": "low",
+          "file": "taskboard/service.py",
+          "line": 70,
+          "summary": "no type hints / docstring"
+        }
+      ],
+      "desc": "Bulk status changes: complete by tag, complete many, reopen.",
+      "branch": "feat/bulk-complete-by-tag"
+    },
+    "12": {
+      "title": "Relative due dates",
+      "size": "L",
+      "clean": true,
+      "planted": [],
+      "desc": "Parse relative due dates (today / tomorrow / +Nd) and format them.",
+      "branch": "feat/relative-due-dates"
+    }
+  },
+  "total_planted": 21
+}

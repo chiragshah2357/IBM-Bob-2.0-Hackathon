@@ -1,0 +1,41 @@
+[
+  {
+    "id": "F1",
+    "category": "style",
+    "severity": "low",
+    "file": "taskboard/service.py",
+    "line": 70,
+    "claim": "camelCase completeAllWithTag",
+    "test_file": "review_tests/test_F1.py",
+    "test_status": "FAIL",
+    "test_output": "AssertionError: style rule violated\n1 failed",
+    "fix_diff": "- violation\n+ compliant",
+    "ticket_ref": null
+  },
+  {
+    "id": "F2",
+    "category": "style",
+    "severity": "low",
+    "file": "taskboard/service.py",
+    "line": 76,
+    "claim": "bare except: pass",
+    "test_file": "review_tests/test_F2.py",
+    "test_status": "FAIL",
+    "test_output": "AssertionError: style rule violated\n1 failed",
+    "fix_diff": "- violation\n+ compliant",
+    "ticket_ref": null
+  },
+  {
+    "id": "F3",
+    "category": "style",
+    "severity": "low",
+    "file": "taskboard/service.py",
+    "line": 70,
+    "claim": "no type hints / docstring",
+    "test_file": "review_tests/test_F3.py",
+    "test_status": "FAIL",
+    "test_output": "AssertionError: style rule violated\n1 failed",
+    "fix_diff": "- violation\n+ compliant",
+    "ticket_ref": null
+  }
+]

@@ -1,0 +1,15 @@
+[
+  {
+    "id": "F1",
+    "category": "bug",
+    "severity": "high",
+    "file": "taskboard/service.py",
+    "line": 58,
+    "claim": "ZeroDivision on empty board",
+    "test_file": "review_tests/test_F1.py",
+    "test_status": "FAIL",
+    "test_output": "assert / error reproduced\n1 failed",
+    "fix_diff": "- buggy\n+ fixed",
+    "ticket_ref": null
+  }
+]

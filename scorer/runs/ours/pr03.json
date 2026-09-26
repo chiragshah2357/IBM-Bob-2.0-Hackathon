@@ -1,0 +1,28 @@
+[
+  {
+    "id": "F1",
+    "category": "bug",
+    "severity": "med",
+    "file": "taskboard/service.py",
+    "line": 26,
+    "claim": "< MAX rejects priority 5",
+    "test_file": "review_tests/test_F1.py",
+    "test_status": "FAIL",
+    "test_output": "assert / error reproduced\n1 failed",
+    "fix_diff": "- buggy\n+ fixed",
+    "ticket_ref": null
+  },
+  {
+    "id": "F2",
+    "category": "coverage",
+    "severity": "low",
+    "file": "tests/test_priority.py",
+    "line": 1,
+    "claim": "no boundary-5 test",
+    "test_file": "review_tests/test_F2.py",
+    "test_status": "FAIL",
+    "test_output": "AssertionError: required test missing\n1 failed",
+    "fix_diff": null,
+    "ticket_ref": null
+  }
+]

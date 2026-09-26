@@ -1,0 +1,28 @@
+[
+  {
+    "id": "B1",
+    "category": "bug",
+    "severity": "med",
+    "file": "taskboard/service.py",
+    "line": 40,
+    "claim": "case-variant dup tag",
+    "test_file": "",
+    "test_status": "not_run",
+    "test_output": "",
+    "fix_diff": null,
+    "ticket_ref": null
+  },
+  {
+    "id": "B2",
+    "category": "style",
+    "severity": "low",
+    "file": "taskboard/_review_nit.py",
+    "line": 6,
+    "claim": "nit",
+    "test_file": "",
+    "test_status": "not_run",
+    "test_output": "",
+    "fix_diff": null,
+    "ticket_ref": null
+  }
+]

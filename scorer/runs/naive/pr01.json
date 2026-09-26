@@ -1,0 +1,28 @@
+[
+  {
+    "id": "N1",
+    "category": "security",
+    "severity": "high",
+    "file": "taskboard/storage.py",
+    "line": 71,
+    "claim": "SQL built with f-string (injection)",
+    "test_file": "",
+    "test_status": "not_run",
+    "test_output": "",
+    "fix_diff": null,
+    "ticket_ref": null
+  },
+  {
+    "id": "NF7",
+    "category": "style",
+    "severity": "low",
+    "file": "taskboard/_review_nit.py",
+    "line": 27,
+    "claim": "suspected issue",
+    "test_file": "",
+    "test_status": "not_run",
+    "test_output": "",
+    "fix_diff": null,
+    "ticket_ref": null
+  }
+]

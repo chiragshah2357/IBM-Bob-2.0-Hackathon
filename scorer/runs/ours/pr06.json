@@ -1,0 +1,28 @@
+[
+  {
+    "id": "F1",
+    "category": "spec",
+    "severity": "med",
+    "file": "taskboard/storage.py",
+    "line": 80,
+    "claim": "missing id fails silently",
+    "test_file": "review_tests/test_F1.py",
+    "test_status": "FAIL",
+    "test_output": "assert mismatch vs spec\n1 failed",
+    "fix_diff": "- wrong\n+ per spec",
+    "ticket_ref": null
+  },
+  {
+    "id": "F2",
+    "category": "coverage",
+    "severity": "low",
+    "file": "tests/test_delete.py",
+    "line": 1,
+    "claim": "no missing-id test",
+    "test_file": "review_tests/test_F2.py",
+    "test_status": "FAIL",
+    "test_output": "AssertionError: required test missing\n1 failed",
+    "fix_diff": null,
+    "ticket_ref": null
+  }
+]

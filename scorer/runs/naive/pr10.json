@@ -1,0 +1,28 @@
+[
+  {
+    "id": "N1",
+    "category": "bug",
+    "severity": "high",
+    "file": "taskboard/storage.py",
+    "line": 96,
+    "claim": "offset = page*size, page 1 skips",
+    "test_file": "",
+    "test_status": "not_run",
+    "test_output": "",
+    "fix_diff": null,
+    "ticket_ref": null
+  },
+  {
+    "id": "NF12",
+    "category": "style",
+    "severity": "low",
+    "file": "taskboard/_review_nit.py",
+    "line": 32,
+    "claim": "suspected issue",
+    "test_file": "",
+    "test_status": "not_run",
+    "test_output": "",
+    "fix_diff": null,
+    "ticket_ref": null
+  }
+]

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Proof-Carrying Review</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<section id="landing">
+  <div class="fx left"><div class="stream" id="fxL"></div></div>
+  <div class="fx right"><div class="stream" id="fxR"></div></div>
+
+  <div class="hero">
+    <div class="brandline">
+      <div class="logo"><img src="assets/bob.png" alt="Bob" /></div>
+      <div class="nm">Proof-Carrying Review<small>Built with IBM Bob 2.0</small></div>
+    </div>
+
+    <h1>Review a pull request<br>the way it should be —<br><span class="g">with proof.</span></h1>
+    <p class="sub">Point Bob at a repository. It pulls the open pull requests, reads each one's intent, reviews the code, and backs every finding with a test that fails. Then it fixes them.</p>
+
+    <div class="reviewbox">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 21.13V25"/></svg>
+      <input id="repo" value="github.com/chiragshah2357/IBM-Bob-Hackathon-TestCases" spellcheck="false" />
+      <button onclick="go()">Review <span class="arw">→</span></button>
+    </div>
+    <p class="hint">Reviewed against ticket, spec &amp; style — every finding backed by a failing test.</p>
+  </div>
+</section>
+<script>
+function go(){
+  const r=document.getElementById('repo').value.trim();
+  location.href='dashboard.html?repo='+encodeURIComponent(r);
+}
+document.getElementById('repo').addEventListener('keydown',e=>{if(e.key==='Enter')go();});
+
+// side "diff rain" — slow-moving review lines in the gutters
+const LINES=[
+  ['del','- if t.due_date <= today:'],['add','+ if not t.done and t.due_date < today:'],
+  ['test','✓ test_due_today_not_overdue'],['del','- ORDER BY title'],['add','+ ORDER BY id'],
+  ['test','✗ test_search_orders_by_id'],['del','- sql = f"... LIKE \'%{q}%\'"'],['add','+ params = (f"%{q}%",)'],
+  ['test','✓ test_rejects_injection'],['del','- offset = page * size'],['add','+ offset = (page-1) * size'],
+  ['test','✗ test_page_one_starts_at_1'],['del','- _TOKEN = "tbx_live_..."'],['add','+ raise RuntimeError(...)'],
+  ['test','✓ test_missing_token_raises'],['del','- print(f"exported {n}")'],['add','+ logger.info("exported %d", n)'],
+  ['test','✓ test_no_print_in_export'],['del','- def completeAllWithTag('],['add','+ def complete_all_with_tag('],
+  ['test','✗ test_snake_case_name'],['del','- except:'],['add','+ raise'],
+];
+function fill(el,shuffle){
+  const seq = shuffle ? LINES.slice().reverse() : LINES;
+  const rows = seq.concat(seq).map(([c,t])=>`<div class="dline ${c}">${t}</div>`).join('');
+  el.innerHTML=rows;
+}
+fill(document.getElementById('fxL'),false);
+fill(document.getElementById('fxR'),true);
+</script>
+</body>
+</html>

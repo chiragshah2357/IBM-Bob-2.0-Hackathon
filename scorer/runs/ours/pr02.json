@@ -1,0 +1,28 @@
+[
+  {
+    "id": "F1",
+    "category": "bug",
+    "severity": "med",
+    "file": "taskboard/service.py",
+    "line": 44,
+    "claim": "<= includes tasks due today",
+    "test_file": "review_tests/test_F1.py",
+    "test_status": "FAIL",
+    "test_output": "assert / error reproduced\n1 failed",
+    "fix_diff": "- buggy\n+ fixed",
+    "ticket_ref": null
+  },
+  {
+    "id": "F2",
+    "category": "spec",
+    "severity": "med",
+    "file": "taskboard/service.py",
+    "line": 44,
+    "claim": "done tasks not excluded",
+    "test_file": "review_tests/test_F2.py",
+    "test_status": "FAIL",
+    "test_output": "assert mismatch vs spec\n1 failed",
+    "fix_diff": "- wrong\n+ per spec",
+    "ticket_ref": null
+  }
+]
