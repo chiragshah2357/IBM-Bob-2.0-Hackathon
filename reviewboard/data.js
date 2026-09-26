@@ -2,10 +2,10 @@ const DATA = {
   "leaderboard": {
     "ours": {
       "recall": 90,
-      "precision": 95,
+      "precision": 100,
       "trust": 100,
-      "false_alarms": 1,
-      "noise": 0.5
+      "false_alarms": 0,
+      "noise": 0.0
     },
     "bob": {
       "recall": 62,
@@ -100,25 +100,25 @@ const DATA = {
           "id": "F1",
           "category": "bug",
           "severity": "med",
-          "claim": "<= includes tasks due today",
+          "claim": "list_overdue uses `due_date <= today` \u2014 tasks due today are incorrectly flagged overdue (off-by-one).",
           "file": "taskboard/service.py",
-          "line": 44,
-          "test": "review_tests/test_F1.py",
+          "line": 60,
+          "test": "review_tests/test_pr02_F1.py",
           "code": "",
-          "fail": "assert / error reproduced\n1 failed",
-          "fix": "- buggy\n+ fixed"
+          "fail": "AssertionError: Expected [] but got [Task(title='Due today'...)] \u2014 task due today was incorrectly marked overdue\nassert [Task(...)] == []\n1 failed in 0.18s",
+          "fix": "--- a/taskboard/service.py\n+++ b/taskboard/service.py\n@@ -57,7 +57,7 @@\n             for task in self._repo.list_all()\n-            if task.due_date is not None and task.due_date <= today\n+            if not task.done and task.due_date is not None and task.due_date < today"
         },
         {
           "id": "F2",
           "category": "spec",
           "severity": "med",
-          "claim": "done tasks not excluded",
+          "claim": "list_overdue does not filter out done tasks \u2014 completed tasks with a past due_date appear as overdue.",
           "file": "taskboard/service.py",
-          "line": 44,
-          "test": "review_tests/test_F2.py",
+          "line": 60,
+          "test": "review_tests/test_pr02_F2.py",
           "code": "",
-          "fail": "assert mismatch vs spec\n1 failed",
-          "fix": "- wrong\n+ per spec"
+          "fail": "AssertionError: Expected [] but got [Task(title='Old errand', done=True...)] \u2014 done task appeared in overdue list\nassert [Task(...)] == []\n1 failed in 0.14s",
+          "fix": "--- a/taskboard/service.py\n+++ b/taskboard/service.py\n@@ -57,7 +57,7 @@\n             for task in self._repo.list_all()\n-            if task.due_date is not None and task.due_date <= today\n+            if not task.done and task.due_date is not None and task.due_date < today"
         }
       ]
     },
@@ -205,37 +205,25 @@ const DATA = {
           "id": "F1",
           "category": "bug",
           "severity": "med",
-          "claim": "case-variant dup tag",
+          "claim": "add_tag dup-check uses raw-stripped tag, not normalized \u2014 adding 'Urgent' when 'urgent' is stored appends a duplicate.",
           "file": "taskboard/service.py",
-          "line": 40,
-          "test": "review_tests/test_F1.py",
+          "line": 66,
+          "test": "review_tests/test_pr05_F1.py",
           "code": "",
-          "fail": "assert / error reproduced\n1 failed",
-          "fix": "- buggy\n+ fixed"
+          "fail": "AssertionError: Expected ['urgent'] but got ['urgent', 'urgent'] \u2014 add_tag appended a case-variant duplicate\nassert ['urgent', 'urgent'] == ['urgent']\n1 failed in 0.24s",
+          "fix": "--- a/taskboard/service.py\n+++ b/taskboard/service.py\n@@ -62,7 +62,7 @@\n         task = self._repo.get(task_id)\n-        tag = tag.strip()\n+        tag = normalize_tag(tag)\n         if tag in task.tags:"
         },
         {
           "id": "F2",
           "category": "spec",
           "severity": "med",
-          "claim": "remove_tag case-sensitive",
+          "claim": "remove_tag filter `existing != tag` is case-sensitive \u2014 'Work' does not remove stored 'work'.",
           "file": "taskboard/service.py",
-          "line": 49,
-          "test": "review_tests/test_F2.py",
+          "line": 84,
+          "test": "review_tests/test_pr05_F2.py",
           "code": "",
-          "fail": "assert mismatch vs spec\n1 failed",
-          "fix": "- wrong\n+ per spec"
-        },
-        {
-          "id": "F3",
-          "category": "style",
-          "severity": "low",
-          "claim": "minor naming nit",
-          "file": "taskboard/_review_nit.py",
-          "line": 1,
-          "test": "review_tests/test_F3.py",
-          "code": "",
-          "fail": "AssertionError\n1 failed",
-          "fix": null
+          "fail": "AssertionError: Expected [] but got ['work'] \u2014 remove_tag did not remove case-variant 'Work' from stored 'work'\nassert ['work'] == []\n1 failed in 0.15s",
+          "fix": "--- a/taskboard/service.py\n+++ b/taskboard/service.py\n@@ -81,7 +81,7 @@\n         task = self._repo.get(task_id)\n-        remaining = [existing for existing in task.tags if existing != tag]\n+        remaining = [existing for existing in task.tags if existing != tag.lower()]"
         }
       ]
     },

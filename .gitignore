@@ -12,3 +12,7 @@ node_modules/
 runs/
 REVIEW.md
 findings.json
+review_tests/
+.pytest_cache/
+findings.json
+REVIEW.md
