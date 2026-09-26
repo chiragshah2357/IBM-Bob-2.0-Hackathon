@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Review · Proof-Carrying Review</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="wrap">
+  <div class="rtop">
+    <a class="team" href="index.html" style="text-decoration:none"><span class="coin" aria-hidden="true"></span>Two Faced Coin</a>
+    <div class="right">
+      <div class="repo"><img src="assets/bob.png" alt="" /><span id="repoName">—</span></div>
+      <a class="btn small ghost" href="index.html">Change repo</a>
+    </div>
+  </div>
+
+  <!-- 1 · Bob goes through the repo -->
+  <div class="card scan" id="scan">
+    <div class="bobbox"><img src="assets/bob.png" alt="" /></div>
+    <div>
+      <h2 id="scanTitle">Bob is going through the repo…</h2>
+      <div class="scanlog" id="scanlog"></div>
+      <div class="scanbar"><i id="scanbar"></i></div>
+    </div>
+  </div>
+
+  <!-- 2 · open PRs, listed in order -->
+  <section id="prSection" class="hidden">
+    <div class="shead">
+      <div><span class="kicker" id="prKicker">Open pull requests</span><h2 id="prHeading">Found them.</h2><p id="prSub"></p></div>
+    </div>
+    <div class="prlist" id="prlist"></div>
+
+    <!-- 3 · run the review -->
+    <div class="card runcta hidden" id="runcta">
+      <div class="txt"><b>Ready when you are.</b><span>Bob will check every PR against its ticket, spec &amp; style guide — and prove each bug with a failing test.</span></div>
+      <button class="btn big pink" id="runBtn">🔍 Run code review</button>
+    </div>
+    <div class="card runprog" id="runprog">
+      <div class="lbl"><span id="runLabel">Starting…</span><span id="runPct">0%</span></div>
+      <div class="scanbar"><i id="runbar"></i></div>
+    </div>
+  </section>
+
+  <!-- 4 · results -->
+  <section id="results" class="hidden">
+    <div class="tiles" id="tiles"></div>
+    <div class="truth" id="truth"><span class="e">🧾</span><p id="truthText"></p></div>
+
+    <div id="scoreSection">
+      <div class="shead"><div><span class="kicker">The scores</span><h2>Proof beats guessing.</h2>
+        <p>Same PRs, same answer key of planted bugs, three reviewers. <span id="scoreSrc"></span></p></div></div>
+      <div class="board">
+        <div class="card podiumcard">
+          <div class="seg" id="seg" role="tablist">
+            <button class="on" data-m="recall">Bugs caught</button>
+            <button data-m="precision">Accuracy</button>
+            <button data-m="trust">Proven</button>
+          </div>
+          <p class="segexpl" id="segExpl"></p>
+          <div class="podium" id="podium"></div>
+        </div>
+        <div class="side">
+          <div class="card alarms"><h3>🚨 False alarms</h3><p>Comments about bugs that weren’t there. Fewer is better.</p><div id="alarms"></div></div>
+          <div class="card sizes"><h3>📏 Big PRs don’t scare Bob</h3><p>Bugs caught, by size of the change.</p><div id="sizes"></div>
+            <div class="skey"><span><i style="background:var(--yellow)"></i>Proof-Carrying</span><span><i style="background:var(--lilac)"></i>Bob built-in</span><span><i style="background:var(--sky)"></i>Naive LLM</span></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="rfoot"><span>Team Two Faced Coin · IBM Bob 2.0 Hackathon</span><a href="https://github.com/chiragshah2357/IBM-Bob-2.0-Hackathon" target="_blank" rel="noopener">Source on GitHub ↗</a></div>
+</div>
+
+<script src="data.js"></script>
+<script src="review.js"></script>
+</body>
+</html>
