@@ -1,0 +1,28 @@
+[
+  {
+    "id": "F1",
+    "category": "security",
+    "severity": "high",
+    "file": "taskboard/storage.py",
+    "line": 108,
+    "claim": "LIKE pattern is embedded into SQL via an f-string; a single-quote in the query breaks the SQL literal and raises OperationalError, violating SPEC §4 (all SQL must use parameterized queries).",
+    "test_file": "review_tests/test_pr01_F1.py",
+    "test_status": "FAIL",
+    "test_output": "FAILED review_tests/test_pr01_F1.py::test_sql_injection_via_single_quote_in_query\nsearch() raised OperationalError for a query containing a single-quote: near \"s\": syntax error\nRoot cause: pattern is interpolated into SQL via f-string — SPEC §4 violation.\n2 failed in 0.31s",
+    "fix_diff": null,
+    "ticket_ref": "TICKET-001"
+  },
+  {
+    "id": "F2",
+    "category": "spec",
+    "severity": "med",
+    "file": "taskboard/storage.py",
+    "line": 116,
+    "claim": "search() uses ORDER BY title instead of ORDER BY id, violating SPEC §3 ('Results are ordered by id') and TICKET-001 AC.",
+    "test_file": "review_tests/test_pr01_F2.py",
+    "test_status": "FAIL",
+    "test_output": "FAILED review_tests/test_pr01_F2.py::test_search_results_ordered_by_id_not_title\nAssertionError: Expected results ordered by id [1, 2, 3], got [2, 3, 1]. The implementation uses ORDER BY title instead of ORDER BY id, violating SPEC §3 and TICKET-001 AC.\nassert [2, 3, 1] == [1, 2, 3]\n2 failed in 0.31s",
+    "fix_diff": null,
+    "ticket_ref": "TICKET-001"
+  }
+]

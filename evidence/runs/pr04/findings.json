@@ -1,0 +1,15 @@
+[
+  {
+    "id": "F1",
+    "category": "bug",
+    "severity": "high",
+    "file": "taskboard/service.py",
+    "line": 78,
+    "claim": "_completion_rate divides done/total without guarding for total=0; completion_rate() and stats() raise ZeroDivisionError on an empty board instead of returning 0.0 as SPEC §3 and TICKET-004 require.",
+    "test_file": "review_tests/test_pr04_F1.py",
+    "test_status": "FAIL",
+    "test_output": "FAILED review_tests/test_pr04_F1.py::test_completion_rate_empty_board_returns_zero\nZeroDivisionError: division by zero\nFAILED review_tests/test_pr04_F1.py::test_stats_completion_rate_empty_board\nZeroDivisionError: division by zero\n2 failed in 0.23s",
+    "fix_diff": "--- a/taskboard/service.py\n+++ b/taskboard/service.py\n@@ -78,1 +78,2 @@\n-    return round(done / total * 100, 1)\n+    if total == 0:\n+        return 0.0\n+    return round(done / total * 100, 1)",
+    "ticket_ref": "TICKET-004"
+  }
+]

@@ -1,0 +1,28 @@
+[
+  {
+    "id": "F1",
+    "category": "bug",
+    "severity": "med",
+    "file": "taskboard/service.py",
+    "line": 66,
+    "claim": "add_tag dup-check uses raw-stripped tag, not normalized — adding 'Urgent' when 'urgent' is stored appends a duplicate.",
+    "test_file": "review_tests/test_pr05_F1.py",
+    "test_status": "FAIL",
+    "test_output": "AssertionError: Expected ['urgent'] but got ['urgent', 'urgent'] — add_tag appended a case-variant duplicate\nassert ['urgent', 'urgent'] == ['urgent']\n1 failed in 0.24s",
+    "fix_diff": "--- a/taskboard/service.py\n+++ b/taskboard/service.py\n@@ -62,7 +62,7 @@\n         task = self._repo.get(task_id)\n-        tag = tag.strip()\n+        tag = normalize_tag(tag)\n         if tag in task.tags:",
+    "ticket_ref": "TICKET-005"
+  },
+  {
+    "id": "F2",
+    "category": "spec",
+    "severity": "med",
+    "file": "taskboard/service.py",
+    "line": 84,
+    "claim": "remove_tag filter `existing != tag` is case-sensitive — 'Work' does not remove stored 'work'.",
+    "test_file": "review_tests/test_pr05_F2.py",
+    "test_status": "FAIL",
+    "test_output": "AssertionError: Expected [] but got ['work'] — remove_tag did not remove case-variant 'Work' from stored 'work'\nassert ['work'] == []\n1 failed in 0.15s",
+    "fix_diff": "--- a/taskboard/service.py\n+++ b/taskboard/service.py\n@@ -81,7 +81,7 @@\n         task = self._repo.get(task_id)\n-        remaining = [existing for existing in task.tags if existing != tag]\n+        remaining = [existing for existing in task.tags if existing != tag.lower()]",
+    "ticket_ref": "TICKET-005"
+  }
+]

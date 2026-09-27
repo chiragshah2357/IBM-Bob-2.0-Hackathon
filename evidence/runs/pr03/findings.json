@@ -1,0 +1,15 @@
+[
+  {
+    "id": "F1",
+    "category": "spec",
+    "severity": "high",
+    "file": "taskboard/service.py",
+    "line": 26,
+    "claim": "_validate_priority uses 'priority < MAX_PRIORITY' (strict less-than), so priority=5 raises ValueError even though SPEC §1 and TICKET-003 require the range 1–5 inclusive.",
+    "test_file": "review_tests/test_pr03_F1.py",
+    "test_status": "FAIL",
+    "test_output": "FAILED review_tests/test_pr03_F1.py::test_create_task_accepts_priority_5\nValueError: priority must be between 1 and 5, got 5\nFAILED review_tests/test_pr03_F1.py::test_set_priority_accepts_priority_5\nValueError: priority must be between 1 and 5, got 5\n2 failed in 0.24s",
+    "fix_diff": "--- a/taskboard/service.py\n+++ b/taskboard/service.py\n@@ -26,1 +26,1 @@\n-    if not MIN_PRIORITY <= priority < MAX_PRIORITY:\n+    if not MIN_PRIORITY <= priority <= MAX_PRIORITY:",
+    "ticket_ref": "TICKET-003"
+  }
+]

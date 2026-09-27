@@ -1,0 +1,28 @@
+[
+  {
+    "id": "F1",
+    "category": "security",
+    "severity": "high",
+    "file": "taskboard/config.py",
+    "line": 27,
+    "claim": "A live secret token 'tbx_live_4f9a2c7e81d34b6a90c1' is hard-coded as _FALLBACK_EXPORT_TOKEN in source code, violating SPEC §4 ('no secrets in source code, no hard-coded fallback values').",
+    "test_file": "review_tests/test_pr07_F1.py",
+    "test_status": "FAIL",
+    "test_output": "FAILED review_tests/test_pr07_F1.py::test_no_hardcoded_secret_token_in_source\nAssertionError: Found hardcoded secret token value(s) in taskboard/config.py: ['tbx_live_4f9a2c7e81d34b6a90c1']. SPEC §4: 'No secrets in source code, and no hard-coded fallback values.'\nassert not ['tbx_live_4f9a2c7e81d34b6a90c1']\n4 failed in 0.27s",
+    "fix_diff": null,
+    "ticket_ref": "TICKET-007"
+  },
+  {
+    "id": "F2",
+    "category": "spec",
+    "severity": "high",
+    "file": "taskboard/config.py",
+    "line": 126,
+    "claim": "get_export_token() returns a hard-coded fallback token when TASKBOARD_EXPORT_TOKEN is missing or empty instead of raising RuntimeError, violating SPEC §4 and TICKET-007.",
+    "test_file": "review_tests/test_pr07_F1.py",
+    "test_status": "FAIL",
+    "test_output": "FAILED review_tests/test_pr07_F1.py::test_get_export_token_missing_raises_runtime_error\nFailed: DID NOT RAISE RuntimeError\nFAILED review_tests/test_pr07_F1.py::test_get_export_token_empty_string_raises_runtime_error\nFailed: DID NOT RAISE RuntimeError\nFAILED review_tests/test_pr07_F1.py::test_get_export_token_whitespace_only_raises_runtime_error\nFailed: DID NOT RAISE RuntimeError\n4 failed in 0.27s",
+    "fix_diff": null,
+    "ticket_ref": "TICKET-007"
+  }
+]
