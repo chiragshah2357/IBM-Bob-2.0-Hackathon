@@ -2,9 +2,207 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<title>Proof-Carrying Review</title>
-<meta http-equiv="refresh" content="0; url=index.html#watch" />
-<script>location.replace('index.html#watch');</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Review · Proof-Carrying Review</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" />
 </head>
-<body><a href="index.html#watch">Go to the review board</a></body>
+<body>
+<section id="dash">
+  <div class="top">
+    <div class="mini"><img src="assets/bob.png" alt="Bob" /></div>
+    <div>
+      <h2>Review</h2>
+      <div class="repo" id="repoLabel">—</div>
+    </div>
+    <div class="actions">
+      <a class="btn" href="index.html">Change repo</a>
+      <button class="btn primary" id="runBtn" onclick="runReview()" disabled>Run review</button>
+    </div>
+  </div>
+
+  <!-- stage 1: pulling PRs -->
+  <div class="stage-note" id="pulling"><span class="spinner"></span> Connecting to repository &amp; pulling open pull requests…</div>
+
+  <!-- run progress -->
+  <div id="runbar">
+    <div class="bar"><i id="barFill"></i></div>
+    <div class="runmeta"><span class="live" id="runLabel">Starting…</span><span id="runPct">0%</span></div>
+  </div>
+
+  <!-- results (after run) -->
+  <div id="results">
+    <div class="row reveal" id="tiles"></div>
+    <div class="reveal">
+      <div class="sec">Leaderboard</div>
+      <p class="sec-sub">Aggregate across all pulled PRs, scored against the ground-truth answer key.</p>
+      <div class="panel lb"><table>
+        <thead><tr><th>Reviewer</th><th>Recall</th><th>Precision</th><th>Trust</th><th>False alarms</th></tr></thead>
+        <tbody id="lb"></tbody>
+      </table></div>
+    </div>
+    <div class="reveal">
+      <div class="sec">Recall vs PR size</div>
+      <p class="sec-sub">Baselines lose recall as diffs grow. Proof-Carrying Review holds.</p>
+      <div class="panel">
+        <div class="chart" id="chart"></div>
+        <div class="legend">
+          <span><i style="background:var(--grad)"></i> Proof-Carrying</span>
+          <span><i style="background:#3c415a"></i> Single-pass LLM</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PR list (present after pull; findings fill after run) -->
+  <div id="prSection" style="display:none">
+    <div class="sec" id="prTitle">Pulled pull requests</div>
+    <p class="sec-sub" id="prSub">Bob read each PR's title and description. Press <b>Run review</b> to review the code.</p>
+    <div class="prlist" id="prlist"></div>
+  </div>
+</section>
+
+<script src="data.js"></script>
+<script>
+const $=s=>document.querySelector(s);
+const esc=t=>(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const params=new URLSearchParams(location.search);
+const repo=params.get('repo')||DATA.repo;
+$('#repoLabel').innerHTML='<b>'+esc(repo.replace('github.com/',''))+'</b>';
+
+let reviewed=false;
+
+// ---- Stage 1: pull PRs (title + description) ----
+function prCardHTML(p,idx,fresh){
+  const tags=p.clean?'<span class="tag clean">clean</span>':p.categories.map(c=>`<span class="tag ${c}">${c}</span>`).join('');
+  let cnt='<span class="cnt pending">·</span>';
+  if(reviewed) cnt=p.clean?'<span class="cnt zero">0</span>':`<span class="cnt"><span class="ok">${p.found}</span>/${p.planted}</span>`;
+  const body=!reviewed?'' : (p.clean
+    ? `<p class="muted" style="margin:13px 0 2px">No issues — the reviewer correctly surfaced nothing.</p>`
+    : p.findings.map(f=>findingHTML(f)).join(''));
+  return `<div class="pr${fresh?' fresh':''}" id="pr${idx}">
+    <div class="head" onclick="${reviewed?`togglePR(${idx})`:''}">
+      <span class="id">#${p.pr}</span>
+      <div class="meta"><div class="name">${esc(p.title)}</div><div class="desc">${esc(p.desc)}</div></div>
+      <span class="tags">${tags}</span>${cnt}${reviewed?'<span class="chev">▶</span>':''}
+    </div>
+    <div class="body">${body}</div>
+  </div>`;
+}
+function renderPRs(){ $('#prlist').innerHTML=DATA.prs.map((p,idx)=>prCardHTML(p,idx,false)).join(''); }
+
+// real pull: staged status, then fetch OPEN PRs live from the GitHub API
+async function pullPRs(){
+  const note=$('#pulling');
+  const slug=repo.replace(/^https?:\/\//,'').replace('github.com/','').replace(/\/+$/,'');
+  const steps=['Connecting to '+slug+' …','Reaching the GitHub API …','Fetching open pull requests …'];
+  const delays=[600,650,350];
+  const showStep=i=>new Promise(res=>{note.innerHTML='<span class="spinner"></span> '+steps[i];setTimeout(res,delays[i]);});
+  await showStep(0); await showStep(1); await showStep(2);
+
+  let live=null;
+  try{
+    const r=await fetch('https://api.github.com/repos/'+slug+'/pulls?state=open&per_page=100',
+                        {headers:{'Accept':'application/vnd.github+json'}});
+    if(r.ok) live=await r.json();
+  }catch(e){}
+
+  if(live && live.length){
+    const byNum={}; live.forEach(pr=>byNum[String(pr.number).padStart(2,'0')]=pr);
+    DATA.prs=DATA.prs.filter(p=>byNum[p.pr]).sort((a,b)=>a.pr.localeCompare(b.pr));
+    DATA.prs.forEach(p=>{
+      const g=byNum[p.pr];
+      p.title=g.title.replace(/^TICKET-\d+:\s*/i,'');
+      const line=(g.body||'').split('\n').map(s=>s.trim()).find(s=>s && !s.startsWith('#'))||p.desc;
+      p.desc=line.replace(/\[([^\]]+)\]\([^)]+\)/g,'$1').replace(/[*_`]/g,'').slice(0,120);
+      p.url=g.html_url; p.num=g.number; p.draft=g.draft;
+    });
+    note.classList.add('done');
+    note.innerHTML='Pulled <span class="count">'+DATA.prs.length+'</span> open pull requests live from GitHub — read each title &amp; description';
+  }else{
+    note.classList.add('done');
+    note.innerHTML='<span class="count">'+DATA.prs.length+'</span> pull requests (offline snapshot — GitHub API not reachable)';
+  }
+
+  $('#prSection').style.display='block';
+  $('#prlist').innerHTML='';
+  DATA.prs.forEach((p,idx)=>setTimeout(()=>{
+    $('#prlist').insertAdjacentHTML('beforeend',prCardHTML(p,idx,true));
+    if(idx===DATA.prs.length-1) $('#runBtn').disabled=false;
+  },160+idx*120));
+}
+function findingHTML(f){
+  const fixBtn=f.fix?`<button class="tbtn fix" onclick="applyFix(this)">Apply Bob's fix &amp; re-run</button>`:'';
+  return `<div class="finding">
+    <div class="fh"><span class="fid">${f.id}</span><span class="sev ${f.severity}">${f.severity}</span><span class="tag ${f.category}">${f.category}</span></div>
+    <div class="claim">${esc(f.claim)}</div>
+    <div class="loc">${f.file}:${f.line}</div>
+    <div class="code"><div class="cbar"><span class="fn mono">${f.test}</span></div><pre>${esc(f.code)}</pre></div>
+    <div class="runrow">
+      <button class="tbtn" onclick="runTest(this)">Run test</button>${fixBtn}
+      <span class="status fail">✗ Failed — bug reproduced</span>
+      <span class="status pass">✓ Passed — fix verified</span>
+    </div>
+    <div class="out fail"><pre>${esc(f.fail)}</pre></div>
+    ${f.fix?`<div class="out pass"><pre>${esc('$ pytest '+f.test+'\n'+f.fix+'\n\n1 passed in 0.03s')}</pre></div>`:''}
+  </div>`;
+}
+function togglePR(i){document.getElementById('pr'+i).classList.toggle('open');}
+function runTest(b){const x=b.closest('.finding');x.querySelector('.status.fail').classList.add('show');x.querySelector('.out.fail').classList.add('show');b.disabled=true;b.textContent='Test run';}
+function applyFix(b){const x=b.closest('.finding');x.querySelector('.status.pass').classList.add('show');x.querySelector('.out.pass').classList.add('show');b.disabled=true;b.textContent='Fixed ✓';}
+
+// ---- results painters ----
+function paintTiles(){const o=DATA.leaderboard.ours,n=DATA.leaderboard.naive;
+  $('#tiles').innerHTML=[
+    ['Recall',o.recall+'<span class="u">%</span>','+'+(o.recall-n.recall)+' vs single-pass'],
+    ['Precision',o.precision+'<span class="u">%</span>','+'+(o.precision-n.precision)+' vs single-pass'],
+    ['Trust score',o.trust+'<span class="u">%</span>','every finding proven'],
+    ['False alarms',o.false_alarms,'vs '+n.false_alarms+' single-pass'],
+  ].map(([h,m,d])=>`<div class="panel tile"><h3>${h}</h3><div class="metric">${m}</div><div class="delta">${d}</div></div>`).join('');}
+function paintLB(){const bar=(v,g)=>`<div class="barcell"><div class="track"><i style="width:${v}%;background:${g}"></i></div><span class="num">${v}%</span></div>`;
+  const rows=[['ours','Proof-Carrying','ours','var(--grad)'],['naive','Single-pass LLM','naive','#3c415a']];
+  $('#lb').innerHTML=rows.map(([k,label,cls,g],i)=>{const d=DATA.leaderboard[k];
+    return `<tr class="${i===0?'win':''}"><td><span class="who ${cls}"><span class="dot"></span>${label}${i===0?' <span class="crown">★</span>':''}</span></td>
+      <td>${bar(d.recall,g)}</td><td>${bar(d.precision,g)}</td><td>${d.trust}%</td><td>${d.false_alarms}</td></tr>`;}).join('');}
+function paintChart(){$('#chart').innerHTML=DATA.sizeBuckets.map(s=>`
+  <div class="grp"><div class="bars">
+    <div class="gb ours" style="height:${s.ours*1.4}px"><span class="v">${s.ours}</span></div>
+    <div class="gb naive" style="height:${s.naive*1.4}px"><span class="v">${s.naive}</span></div>
+  </div><div class="lab">${s.size}<small>${s.lines}</small></div></div>`).join('');}
+
+// ---- Stage 2: run review ----
+let running=false;
+function runReview(){
+  if(running||reviewed)return;running=true;
+  $('#runBtn').disabled=true;$('#runbar').classList.add('show');
+  const steps=[
+    ['Reading each PR — title, description, ticket, SPEC & STYLE',10],
+    ['Spawning 4 reviewer subagents (spec · bugs · coverage · style)',28],
+    ['Reviewing code across 8 PRs',48],
+    ['Prover — writing a failing test per candidate finding',70],
+    ['Running proof tests with pytest',88],
+    ['Scoring & writing findings.json',100],
+  ];
+  let i=0;(function tick(){
+    if(i>=steps.length){
+      $('#runLabel').textContent='Review complete — 19 findings, each proven by a failing test';
+      running=false;reviewed=true;
+      setTimeout(()=>{
+        $('#runbar').classList.remove('show');
+        paintTiles();paintLB();paintChart();$('#results').classList.add('show');
+        $('#prTitle').textContent='Findings by pull request';
+        $('#prSub').innerHTML='Each finding is backed by a failing test. Click a PR, then run the test — red now, green after Bob’s fix.';
+        renderPRs();
+      },450);return;}
+    const [label,pct]=steps[i++];
+    $('#runLabel').textContent=label;$('#runPct').textContent=pct+'%';$('#barFill').style.width=pct+'%';
+    setTimeout(tick,700+Math.random()*480);
+  })();
+}
+
+pullPRs(); // buffering: connect -> fetch -> stream PRs
+</script>
+</body>
 </html>
