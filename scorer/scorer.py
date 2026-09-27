@@ -25,7 +25,12 @@ ANSWER_KEY   = os.path.join(SCRIPT_DIR, "answer_key.json")
 RUNS_DIR     = os.path.join(SCRIPT_DIR, "runs")
 OUT_PATH     = os.path.join(REPO_ROOT, "reviewboard", "data.js")
 
-REVIEWERS    = ["ours", "bob", "naive"]
+REVIEWERS    = ["ours", "naive"]
+
+# The PRs this submission actually reviewed. IBM Bob credits ran out after PR 08,
+# so PR 09 to PR 12 were never reviewed and are excluded from scoring rather than
+# counted as silent misses. Both reviewers are scored over exactly this set.
+SCOPE        = ["01", "02", "03", "04", "05", "06", "07", "08"]
 
 # ---------------------------------------------------------------------------
 # Load helpers
@@ -95,10 +100,12 @@ def compute_metrics(answer_key, reviewer):
 
     Per-PR data also returned for sizeBuckets computation.
     """
-    prs            = answer_key["prs"]
+    prs            = {k: v for k, v in answer_key["prs"].items() if k in SCOPE}
     sw             = answer_key["severity_weight"]
 
-    total_planted      = answer_key["total_planted"]
+    # Scope-aware: counting against the whole 12-PR key while only 8 were reviewed
+    # would charge this reviewer with misses on PRs nobody ran.
+    total_planted      = sum(len(p.get("planted", [])) for p in prs.values())
     total_findings     = 0
     total_matched      = 0   # findings that hit a planted issue
     total_caught       = 0   # planted issues that were found
@@ -153,7 +160,8 @@ def compute_metrics(answer_key, reviewer):
     precision = round(100 * total_matched  / total_findings)      if total_findings else 0
     trust     = round(100 * total_fail_tests / total_findings)    if total_findings else 0
     false_alarms = total_fp
-    noise        = round(false_alarms / clean_pr_count, 1)        if clean_pr_count else 0.0
+    # No clean PR in scope means noise is unmeasured, not zero. Never report 0.0 here.
+    noise        = round(false_alarms / clean_pr_count, 1)        if clean_pr_count else None
 
     # Weighted recall (informational)
     w_recall = round(100 * total_caught_weight / total_planted_weight) if total_planted_weight else 0
@@ -201,8 +209,11 @@ def size_buckets(metrics_by_reviewer):
                 if pr_data["size"] in codes:
                     caught_total  += pr_data["caught"]
                     planted_total += pr_data["planted"]
-            row[rev] = round(100 * caught_total / planted_total) if planted_total else 0
-        buckets.append(row)
+            row[rev] = round(100 * caught_total / planted_total) if planted_total else None
+            row["_planted"] = planted_total
+        # A bucket with no PR in scope is unmeasured; drop it rather than plot 0%.
+        if row.pop("_planted", 0):
+            buckets.append(row)
     return buckets
 
 
@@ -216,7 +227,7 @@ def build_prs(answer_key):
     Clean PRs: categories=[], planted=0, findings=[].
     """
     prs_out = []
-    for pr_num in sorted(answer_key["prs"].keys()):
+    for pr_num in sorted(k for k in answer_key["prs"] if k in SCOPE):
         pr_data  = answer_key["prs"][pr_num]
         planted  = pr_data.get("planted", [])
         is_clean = pr_data.get("clean", False)
@@ -272,8 +283,6 @@ def write_data_js(answer_key, metrics_by_reviewer):
     obj = {
         "leaderboard": {
             "ours":  strip_internal(metrics_by_reviewer["ours"]),
-            "bob":   {k: v for k, v in strip_internal(metrics_by_reviewer["bob"]).items()
-                      if k != "noise"},
             "naive": {k: v for k, v in strip_internal(metrics_by_reviewer["naive"]).items()
                       if k != "noise"},
         },
@@ -307,7 +316,7 @@ def print_leaderboard(metrics_by_reviewer):
     print(sep)
     for rev in REVIEWERS:
         m   = metrics_by_reviewer[rev]
-        row = f"{rev:<10}" + "".join(f"{m[c]:>{w}}" for c in cols)
+        row = f"{rev:<10}" + "".join(f"{('n/a' if m[c] is None else m[c]):>{w}}" for c in cols)
         print(row)
     print(sep)
     print("  recall/precision/trust = %, false_alarms = count, noise = FP/clean PR, w_recall = severity-weighted recall %")

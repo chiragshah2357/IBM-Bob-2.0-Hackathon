@@ -50,8 +50,7 @@
         <div class="chart" id="chart"></div>
         <div class="legend">
           <span><i style="background:var(--grad)"></i> Proof-Carrying</span>
-          <span><i style="background:#6f6a99"></i> Bob built-in</span>
-          <span><i style="background:#3c415a"></i> Naive LLM</span>
+          <span><i style="background:#3c415a"></i> Single-pass LLM</span>
         </div>
       </div>
     </div>
@@ -155,22 +154,21 @@ function runTest(b){const x=b.closest('.finding');x.querySelector('.status.fail'
 function applyFix(b){const x=b.closest('.finding');x.querySelector('.status.pass').classList.add('show');x.querySelector('.out.pass').classList.add('show');b.disabled=true;b.textContent='Fixed ✓';}
 
 // ---- results painters ----
-function paintTiles(){const o=DATA.leaderboard.ours,b=DATA.leaderboard.bob,n=DATA.leaderboard.naive;
+function paintTiles(){const o=DATA.leaderboard.ours,n=DATA.leaderboard.naive;
   $('#tiles').innerHTML=[
-    ['Recall',o.recall+'<span class="u">%</span>','+'+(o.recall-b.recall)+' vs Bob built-in'],
-    ['Precision',o.precision+'<span class="u">%</span>','+'+(o.precision-n.precision)+' vs Naive LLM'],
+    ['Recall',o.recall+'<span class="u">%</span>','+'+(o.recall-n.recall)+' vs single-pass'],
+    ['Precision',o.precision+'<span class="u">%</span>','+'+(o.precision-n.precision)+' vs single-pass'],
     ['Trust score',o.trust+'<span class="u">%</span>','every finding proven'],
-    ['Noise / clean PR',o.noise,'fewest false alarms'],
+    ['False alarms',o.false_alarms,'vs '+n.false_alarms+' single-pass'],
   ].map(([h,m,d])=>`<div class="panel tile"><h3>${h}</h3><div class="metric">${m}</div><div class="delta">${d}</div></div>`).join('');}
 function paintLB(){const bar=(v,g)=>`<div class="barcell"><div class="track"><i style="width:${v}%;background:${g}"></i></div><span class="num">${v}%</span></div>`;
-  const rows=[['ours','Proof-Carrying','ours','var(--grad)'],['bob','Bob built-in','bob','#6f6a99'],['naive','Naive LLM','naive','#3c415a']];
+  const rows=[['ours','Proof-Carrying','ours','var(--grad)'],['naive','Single-pass LLM','naive','#3c415a']];
   $('#lb').innerHTML=rows.map(([k,label,cls,g],i)=>{const d=DATA.leaderboard[k];
     return `<tr class="${i===0?'win':''}"><td><span class="who ${cls}"><span class="dot"></span>${label}${i===0?' <span class="crown">★</span>':''}</span></td>
       <td>${bar(d.recall,g)}</td><td>${bar(d.precision,g)}</td><td>${d.trust}%</td><td>${d.false_alarms}</td></tr>`;}).join('');}
 function paintChart(){$('#chart').innerHTML=DATA.sizeBuckets.map(s=>`
   <div class="grp"><div class="bars">
     <div class="gb ours" style="height:${s.ours*1.4}px"><span class="v">${s.ours}</span></div>
-    <div class="gb bob" style="height:${s.bob*1.4}px"><span class="v">${s.bob}</span></div>
     <div class="gb naive" style="height:${s.naive*1.4}px"><span class="v">${s.naive}</span></div>
   </div><div class="lab">${s.size}<small>${s.lines}</small></div></div>`).join('');}
 
@@ -182,7 +180,7 @@ function runReview(){
   const steps=[
     ['Reading each PR — title, description, ticket, SPEC & STYLE',10],
     ['Spawning 4 reviewer subagents (spec · bugs · coverage · style)',28],
-    ['Reviewing code across 12 PRs',48],
+    ['Reviewing code across 8 PRs',48],
     ['Prover — writing a failing test per candidate finding',70],
     ['Running proof tests with pytest',88],
     ['Scoring & writing findings.json',100],

@@ -8,11 +8,7 @@ __pycache__/
 .pytest_cache/
 node_modules/
 
-# local review artifacts
-runs/
-REVIEW.md
-findings.json
-review_tests/
+# stale root-level scratch outputs; the real ones live in evidence/runs/
+/REVIEW.md
+/findings.json
 .pytest_cache/
-findings.json
-REVIEW.md

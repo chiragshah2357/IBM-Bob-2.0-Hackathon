@@ -1,46 +1,31 @@
 const DATA = {
   "leaderboard": {
     "ours": {
-      "recall": 90,
+      "recall": 81,
       "precision": 100,
       "trust": 100,
       "false_alarms": 0,
-      "noise": 0.0
-    },
-    "bob": {
-      "recall": 62,
-      "precision": 72,
-      "trust": 0,
-      "false_alarms": 5
+      "noise": null
     },
     "naive": {
-      "recall": 48,
-      "precision": 43,
+      "recall": 69,
+      "precision": 58,
       "trust": 0,
-      "false_alarms": 13
+      "false_alarms": 8
     }
   },
   "sizeBuckets": [
     {
       "size": "Small",
       "lines": "\u2264250 lines",
-      "ours": 100,
-      "bob": 62,
-      "naive": 50
+      "ours": 88,
+      "naive": 75
     },
     {
       "size": "Medium",
       "lines": "250\u2013310 lines",
-      "ours": 88,
-      "bob": 62,
-      "naive": 50
-    },
-    {
-      "size": "Large",
-      "lines": "310+ lines",
-      "ours": 80,
-      "bob": 60,
-      "naive": 40
+      "ours": 75,
+      "naive": 62
     }
   ],
   "prs": [
@@ -61,25 +46,25 @@ const DATA = {
           "id": "F1",
           "category": "security",
           "severity": "high",
-          "claim": "SQL built with f-string (injection)",
+          "claim": "LIKE pattern is embedded into SQL via an f-string; a single-quote in the query breaks the SQL literal and raises OperationalError, violating SPEC \u00a74 (all SQL must use parameterized queries).",
           "file": "taskboard/storage.py",
-          "line": 71,
-          "test": "review_tests/test_F1.py",
+          "line": 108,
+          "test": "review_tests/test_pr01_F1.py",
           "code": "",
-          "fail": "AssertionError / injection reproduced\n1 failed",
-          "fix": "- insecure line\n+ safe line"
+          "fail": "FAILED review_tests/test_pr01_F1.py::test_sql_injection_via_single_quote_in_query\nsearch() raised OperationalError for a query containing a single-quote: near \"s\": syntax error\nRoot cause: pattern is interpolated into SQL via f-string \u2014 SPEC \u00a74 violation.\n2 failed in 0.31s",
+          "fix": null
         },
         {
           "id": "F2",
           "category": "spec",
           "severity": "med",
-          "claim": "results ordered by title, not id",
+          "claim": "search() uses ORDER BY title instead of ORDER BY id, violating SPEC \u00a73 ('Results are ordered by id') and TICKET-001 AC.",
           "file": "taskboard/storage.py",
-          "line": 73,
-          "test": "review_tests/test_F2.py",
+          "line": 116,
+          "test": "review_tests/test_pr01_F2.py",
           "code": "",
-          "fail": "assert mismatch vs spec\n1 failed",
-          "fix": "- wrong\n+ per spec"
+          "fail": "FAILED review_tests/test_pr01_F2.py::test_search_results_ordered_by_id_not_title\nAssertionError: Expected results ordered by id [1, 2, 3], got [2, 3, 1]. The implementation uses ORDER BY title instead of ORDER BY id, violating SPEC \u00a73 and TICKET-001 AC.\nassert [2, 3, 1] == [1, 2, 3]\n2 failed in 0.31s",
+          "fix": null
         }
       ]
     },
@@ -133,31 +118,19 @@ const DATA = {
         "coverage"
       ],
       "planted": 2,
-      "found": 2,
+      "found": 1,
       "findings": [
         {
           "id": "F1",
-          "category": "bug",
-          "severity": "med",
-          "claim": "< MAX rejects priority 5",
+          "category": "spec",
+          "severity": "high",
+          "claim": "_validate_priority uses 'priority < MAX_PRIORITY' (strict less-than), so priority=5 raises ValueError even though SPEC \u00a71 and TICKET-003 require the range 1\u20135 inclusive.",
           "file": "taskboard/service.py",
           "line": 26,
-          "test": "review_tests/test_F1.py",
+          "test": "review_tests/test_pr03_F1.py",
           "code": "",
-          "fail": "assert / error reproduced\n1 failed",
-          "fix": "- buggy\n+ fixed"
-        },
-        {
-          "id": "F2",
-          "category": "coverage",
-          "severity": "low",
-          "claim": "no boundary-5 test",
-          "file": "tests/test_priority.py",
-          "line": 1,
-          "test": "review_tests/test_F2.py",
-          "code": "",
-          "fail": "AssertionError: required test missing\n1 failed",
-          "fix": null
+          "fail": "FAILED review_tests/test_pr03_F1.py::test_create_task_accepts_priority_5\nValueError: priority must be between 1 and 5, got 5\nFAILED review_tests/test_pr03_F1.py::test_set_priority_accepts_priority_5\nValueError: priority must be between 1 and 5, got 5\n2 failed in 0.24s",
+          "fix": "--- a/taskboard/service.py\n+++ b/taskboard/service.py\n@@ -26,1 +26,1 @@\n-    if not MIN_PRIORITY <= priority < MAX_PRIORITY:\n+    if not MIN_PRIORITY <= priority <= MAX_PRIORITY:"
         }
       ]
     },
@@ -178,13 +151,13 @@ const DATA = {
           "id": "F1",
           "category": "bug",
           "severity": "high",
-          "claim": "ZeroDivision on empty board",
+          "claim": "_completion_rate divides done/total without guarding for total=0; completion_rate() and stats() raise ZeroDivisionError on an empty board instead of returning 0.0 as SPEC \u00a73 and TICKET-004 require.",
           "file": "taskboard/service.py",
-          "line": 58,
-          "test": "review_tests/test_F1.py",
+          "line": 78,
+          "test": "review_tests/test_pr04_F1.py",
           "code": "",
-          "fail": "assert / error reproduced\n1 failed",
-          "fix": "- buggy\n+ fixed"
+          "fail": "FAILED review_tests/test_pr04_F1.py::test_completion_rate_empty_board_returns_zero\nZeroDivisionError: division by zero\nFAILED review_tests/test_pr04_F1.py::test_stats_completion_rate_empty_board\nZeroDivisionError: division by zero\n2 failed in 0.23s",
+          "fix": "--- a/taskboard/service.py\n+++ b/taskboard/service.py\n@@ -78,1 +78,2 @@\n-    return round(done / total * 100, 1)\n+    if total == 0:\n+        return 0.0\n+    return round(done / total * 100, 1)"
         }
       ]
     },
@@ -238,30 +211,18 @@ const DATA = {
         "spec"
       ],
       "planted": 2,
-      "found": 2,
+      "found": 1,
       "findings": [
         {
           "id": "F1",
           "category": "spec",
-          "severity": "med",
-          "claim": "missing id fails silently",
+          "severity": "high",
+          "claim": "TaskRepository.delete() returns True/False instead of raising TaskNotFoundError for a missing id, silently ignoring the deletion of a non-existent task and violating SPEC \u00a72 and TICKET-006.",
           "file": "taskboard/storage.py",
-          "line": 80,
-          "test": "review_tests/test_F1.py",
+          "line": 84,
+          "test": "review_tests/test_pr06_F1.py",
           "code": "",
-          "fail": "assert mismatch vs spec\n1 failed",
-          "fix": "- wrong\n+ per spec"
-        },
-        {
-          "id": "F2",
-          "category": "coverage",
-          "severity": "low",
-          "claim": "no missing-id test",
-          "file": "tests/test_delete.py",
-          "line": 1,
-          "test": "review_tests/test_F2.py",
-          "code": "",
-          "fail": "AssertionError: required test missing\n1 failed",
+          "fail": "FAILED review_tests/test_pr06_F1.py::test_repo_delete_missing_id_raises_task_not_found_error\nFailed: DID NOT RAISE TaskNotFoundError\nFAILED review_tests/test_pr06_F1.py::test_service_delete_task_missing_id_raises_task_not_found_error\nFailed: DID NOT RAISE TaskNotFoundError\n2 failed in 0.23s",
           "fix": null
         }
       ]
@@ -283,25 +244,25 @@ const DATA = {
           "id": "F1",
           "category": "security",
           "severity": "high",
-          "claim": "hard-coded fallback token",
+          "claim": "A live secret token 'tbx_live_4f9a2c7e81d34b6a90c1' is hard-coded as _FALLBACK_EXPORT_TOKEN in source code, violating SPEC \u00a74 ('no secrets in source code, no hard-coded fallback values').",
           "file": "taskboard/config.py",
-          "line": 9,
-          "test": "review_tests/test_F1.py",
+          "line": 27,
+          "test": "review_tests/test_pr07_F1.py",
           "code": "",
-          "fail": "AssertionError / injection reproduced\n1 failed",
-          "fix": "- insecure line\n+ safe line"
+          "fail": "FAILED review_tests/test_pr07_F1.py::test_no_hardcoded_secret_token_in_source\nAssertionError: Found hardcoded secret token value(s) in taskboard/config.py: ['tbx_live_4f9a2c7e81d34b6a90c1']. SPEC \u00a74: 'No secrets in source code, and no hard-coded fallback values.'\nassert not ['tbx_live_4f9a2c7e81d34b6a90c1']\n4 failed in 0.27s",
+          "fix": null
         },
         {
           "id": "F2",
           "category": "spec",
-          "severity": "med",
-          "claim": "missing token not RuntimeError",
+          "severity": "high",
+          "claim": "get_export_token() returns a hard-coded fallback token when TASKBOARD_EXPORT_TOKEN is missing or empty instead of raising RuntimeError, violating SPEC \u00a74 and TICKET-007.",
           "file": "taskboard/config.py",
-          "line": 11,
-          "test": "review_tests/test_F2.py",
+          "line": 126,
+          "test": "review_tests/test_pr07_F1.py",
           "code": "",
-          "fail": "assert mismatch vs spec\n1 failed",
-          "fix": "- wrong\n+ per spec"
+          "fail": "FAILED review_tests/test_pr07_F1.py::test_get_export_token_missing_raises_runtime_error\nFailed: DID NOT RAISE RuntimeError\nFAILED review_tests/test_pr07_F1.py::test_get_export_token_empty_string_raises_runtime_error\nFailed: DID NOT RAISE RuntimeError\nFAILED review_tests/test_pr07_F1.py::test_get_export_token_whitespace_only_raises_runtime_error\nFailed: DID NOT RAISE RuntimeError\n4 failed in 0.27s",
+          "fix": null
         }
       ]
     },
@@ -320,128 +281,29 @@ const DATA = {
       "findings": [
         {
           "id": "F1",
-          "category": "bug",
-          "severity": "med",
-          "claim": "manual CSV join breaks commas",
-          "file": "taskboard/export.py",
-          "line": 22,
-          "test": "review_tests/test_F1.py",
-          "code": "",
-          "fail": "assert / error reproduced\n1 failed",
-          "fix": "- buggy\n+ fixed"
-        },
-        {
-          "id": "F2",
-          "category": "style",
-          "severity": "low",
-          "claim": "print() in library",
-          "file": "taskboard/export.py",
-          "line": 29,
-          "test": "review_tests/test_F2.py",
-          "code": "",
-          "fail": "AssertionError: style rule violated\n1 failed",
-          "fix": "- violation\n+ compliant"
-        }
-      ]
-    },
-    {
-      "pr": "09",
-      "title": "Task summaries and table view",
-      "desc": "Human-readable task summary and a plain-text table view.",
-      "size": "L",
-      "clean": true,
-      "categories": [],
-      "planted": 0,
-      "found": 0,
-      "findings": []
-    },
-    {
-      "pr": "10",
-      "title": "Paginate task list",
-      "desc": "Paginate the task list with 1-indexed pages and totals.",
-      "size": "L",
-      "clean": false,
-      "categories": [
-        "bug",
-        "spec"
-      ],
-      "planted": 2,
-      "found": 1,
-      "findings": [
-        {
-          "id": "F1",
-          "category": "bug",
+          "category": "spec",
           "severity": "high",
-          "claim": "offset = page*size, page 1 skips",
-          "file": "taskboard/storage.py",
-          "line": 96,
-          "test": "review_tests/test_F1.py",
+          "claim": "export_csv() joins fields with raw commas (','.join) instead of using Python's csv module, so a title containing a comma splits across columns and does not round-trip, violating SPEC \u00a75 and TICKET-008.",
+          "file": "taskboard/export.py",
+          "line": 57,
+          "test": "review_tests/test_pr08_F1.py",
           "code": "",
-          "fail": "assert / error reproduced\n1 failed",
-          "fix": "- buggy\n+ fixed"
-        }
-      ]
-    },
-    {
-      "pr": "11",
-      "title": "Bulk status changes",
-      "desc": "Bulk status changes: complete by tag, complete many, reopen.",
-      "size": "L",
-      "clean": false,
-      "categories": [
-        "style"
-      ],
-      "planted": 3,
-      "found": 3,
-      "findings": [
-        {
-          "id": "F1",
-          "category": "style",
-          "severity": "low",
-          "claim": "camelCase completeAllWithTag",
-          "file": "taskboard/service.py",
-          "line": 70,
-          "test": "review_tests/test_F1.py",
-          "code": "",
-          "fail": "AssertionError: style rule violated\n1 failed",
-          "fix": "- violation\n+ compliant"
+          "fail": "FAILED review_tests/test_pr08_F1.py::test_export_csv_title_with_comma_roundtrips\nAssertionError: Title with comma did not round-trip: got 'Pay rent'. The implementation uses manual ','.join() instead of Python's csv module, so commas in titles split the field into extra columns. SPEC \u00a75 violation.\nassert 'Pay rent' == 'Pay rent, groceries'\n2 failed, 1 passed in 0.31s",
+          "fix": null
         },
         {
           "id": "F2",
           "category": "style",
           "severity": "low",
-          "claim": "bare except: pass",
-          "file": "taskboard/service.py",
-          "line": 76,
-          "test": "review_tests/test_F2.py",
+          "claim": "export_csv() calls print() to report the export count, violating STYLE_GUIDE rule 4 ('No print() in library code \u2014 use the module-level logger').",
+          "file": "taskboard/export.py",
+          "line": 61,
+          "test": "review_tests/test_pr08_F2.py",
           "code": "",
-          "fail": "AssertionError: style rule violated\n1 failed",
-          "fix": "- violation\n+ compliant"
-        },
-        {
-          "id": "F3",
-          "category": "style",
-          "severity": "low",
-          "claim": "no type hints / docstring",
-          "file": "taskboard/service.py",
-          "line": 70,
-          "test": "review_tests/test_F3.py",
-          "code": "",
-          "fail": "AssertionError: style rule violated\n1 failed",
-          "fix": "- violation\n+ compliant"
+          "fail": "FAILED review_tests/test_pr08_F2.py::test_export_csv_does_not_call_print\nAssertionError: Found print() call(s) at line(s) [61] in taskboard/export.py. STYLE_GUIDE rule 4: 'No print() in library code. Use the module-level logger.'\nassert not [61]\n2 failed, 1 passed in 0.31s",
+          "fix": "--- a/taskboard/export.py\n+++ b/taskboard/export.py\n@@ -58,7 +58,7 @@\n     except OSError:\n         logger.error(\"could not write CSV export to %s\", target)\n         raise\n-    print(f\"Exported {len(rows)} tasks to {target}\")\n+    logger.info(\"exported %d tasks to %s\", len(rows), target)\n     return len(rows)"
         }
       ]
-    },
-    {
-      "pr": "12",
-      "title": "Relative due dates",
-      "desc": "Parse relative due dates (today / tomorrow / +Nd) and format them.",
-      "size": "L",
-      "clean": true,
-      "categories": [],
-      "planted": 0,
-      "found": 0,
-      "findings": []
     }
   ]
 };
