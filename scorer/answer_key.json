@@ -17,7 +17,7 @@
           "category": "security",
           "severity": "high",
           "file": "taskboard/storage.py",
-          "line": 71,
+          "line": 110,
           "summary": "SQL built with f-string (injection)"
         },
         {
@@ -25,7 +25,7 @@
           "category": "spec",
           "severity": "med",
           "file": "taskboard/storage.py",
-          "line": 73,
+          "line": 116,
           "summary": "results ordered by title, not id"
         }
       ],
@@ -42,7 +42,7 @@
           "category": "bug",
           "severity": "med",
           "file": "taskboard/service.py",
-          "line": 44,
+          "line": 60,
           "summary": "<= includes tasks due today"
         },
         {
@@ -50,7 +50,7 @@
           "category": "spec",
           "severity": "med",
           "file": "taskboard/service.py",
-          "line": 44,
+          "line": 60,
           "summary": "done tasks not excluded"
         }
       ],
@@ -92,7 +92,7 @@
           "category": "bug",
           "severity": "high",
           "file": "taskboard/service.py",
-          "line": 58,
+          "line": 78,
           "summary": "ZeroDivision on empty board"
         },
         {
@@ -117,7 +117,7 @@
           "category": "bug",
           "severity": "med",
           "file": "taskboard/service.py",
-          "line": 40,
+          "line": 65,
           "summary": "case-variant dup tag"
         },
         {
@@ -125,7 +125,7 @@
           "category": "spec",
           "severity": "med",
           "file": "taskboard/service.py",
-          "line": 49,
+          "line": 84,
           "summary": "remove_tag case-sensitive"
         }
       ],
@@ -142,7 +142,7 @@
           "category": "spec",
           "severity": "med",
           "file": "taskboard/storage.py",
-          "line": 80,
+          "line": 96,
           "summary": "missing id fails silently"
         },
         {
@@ -167,7 +167,7 @@
           "category": "security",
           "severity": "high",
           "file": "taskboard/config.py",
-          "line": 9,
+          "line": 27,
           "summary": "hard-coded fallback token"
         },
         {
@@ -175,7 +175,7 @@
           "category": "spec",
           "severity": "med",
           "file": "taskboard/config.py",
-          "line": 11,
+          "line": 126,
           "summary": "missing token not RuntimeError"
         }
       ],
@@ -192,7 +192,7 @@
           "category": "bug",
           "severity": "med",
           "file": "taskboard/export.py",
-          "line": 22,
+          "line": 57,
           "summary": "manual CSV join breaks commas"
         },
         {
@@ -200,7 +200,7 @@
           "category": "style",
           "severity": "low",
           "file": "taskboard/export.py",
-          "line": 29,
+          "line": 61,
           "summary": "print() in library"
         }
       ],
@@ -282,5 +282,6 @@
       "branch": "feat/relative-due-dates"
     }
   },
-  "total_planted": 21
+  "total_planted": 21,
+  "line_numbers_note": "Planted line numbers were recorded approximately when the PRs were authored and did not point at the described code. On 2026-09-27 they were corrected to the real line in each branch, located by searching for the described construct. Categories, severities and the set of planted issues were not changed. Coverage issues stay at line 1 of the test file, since they describe a missing test rather than a line."
 }
