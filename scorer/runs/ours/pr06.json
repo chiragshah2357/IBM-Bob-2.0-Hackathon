@@ -2,27 +2,14 @@
   {
     "id": "F1",
     "category": "spec",
-    "severity": "med",
+    "severity": "high",
     "file": "taskboard/storage.py",
-    "line": 80,
-    "claim": "missing id fails silently",
-    "test_file": "review_tests/test_F1.py",
+    "line": 84,
+    "claim": "TaskRepository.delete() returns True/False instead of raising TaskNotFoundError for a missing id, silently ignoring the deletion of a non-existent task and violating SPEC §2 and TICKET-006.",
+    "test_file": "review_tests/test_pr06_F1.py",
     "test_status": "FAIL",
-    "test_output": "assert mismatch vs spec\n1 failed",
-    "fix_diff": "- wrong\n+ per spec",
-    "ticket_ref": null
-  },
-  {
-    "id": "F2",
-    "category": "coverage",
-    "severity": "low",
-    "file": "tests/test_delete.py",
-    "line": 1,
-    "claim": "no missing-id test",
-    "test_file": "review_tests/test_F2.py",
-    "test_status": "FAIL",
-    "test_output": "AssertionError: required test missing\n1 failed",
+    "test_output": "FAILED review_tests/test_pr06_F1.py::test_repo_delete_missing_id_raises_task_not_found_error\nFailed: DID NOT RAISE TaskNotFoundError\nFAILED review_tests/test_pr06_F1.py::test_service_delete_task_missing_id_raises_task_not_found_error\nFailed: DID NOT RAISE TaskNotFoundError\n2 failed in 0.23s",
     "fix_diff": null,
-    "ticket_ref": null
+    "ticket_ref": "TICKET-006"
   }
 ]

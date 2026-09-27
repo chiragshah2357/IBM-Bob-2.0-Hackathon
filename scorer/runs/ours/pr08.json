@@ -1,28 +1,28 @@
 [
   {
     "id": "F1",
-    "category": "bug",
-    "severity": "med",
+    "category": "spec",
+    "severity": "high",
     "file": "taskboard/export.py",
-    "line": 22,
-    "claim": "manual CSV join breaks commas",
-    "test_file": "review_tests/test_F1.py",
+    "line": 57,
+    "claim": "export_csv() joins fields with raw commas (','.join) instead of using Python's csv module, so a title containing a comma splits across columns and does not round-trip, violating SPEC §5 and TICKET-008.",
+    "test_file": "review_tests/test_pr08_F1.py",
     "test_status": "FAIL",
-    "test_output": "assert / error reproduced\n1 failed",
-    "fix_diff": "- buggy\n+ fixed",
-    "ticket_ref": null
+    "test_output": "FAILED review_tests/test_pr08_F1.py::test_export_csv_title_with_comma_roundtrips\nAssertionError: Title with comma did not round-trip: got 'Pay rent'. The implementation uses manual ','.join() instead of Python's csv module, so commas in titles split the field into extra columns. SPEC §5 violation.\nassert 'Pay rent' == 'Pay rent, groceries'\n2 failed, 1 passed in 0.31s",
+    "fix_diff": null,
+    "ticket_ref": "TICKET-008"
   },
   {
     "id": "F2",
     "category": "style",
     "severity": "low",
     "file": "taskboard/export.py",
-    "line": 29,
-    "claim": "print() in library",
-    "test_file": "review_tests/test_F2.py",
+    "line": 61,
+    "claim": "export_csv() calls print() to report the export count, violating STYLE_GUIDE rule 4 ('No print() in library code — use the module-level logger').",
+    "test_file": "review_tests/test_pr08_F2.py",
     "test_status": "FAIL",
-    "test_output": "AssertionError: style rule violated\n1 failed",
-    "fix_diff": "- violation\n+ compliant",
-    "ticket_ref": null
+    "test_output": "FAILED review_tests/test_pr08_F2.py::test_export_csv_does_not_call_print\nAssertionError: Found print() call(s) at line(s) [61] in taskboard/export.py. STYLE_GUIDE rule 4: 'No print() in library code. Use the module-level logger.'\nassert not [61]\n2 failed, 1 passed in 0.31s",
+    "fix_diff": "--- a/taskboard/export.py\n+++ b/taskboard/export.py\n@@ -58,7 +58,7 @@\n     except OSError:\n         logger.error(\"could not write CSV export to %s\", target)\n         raise\n-    print(f\"Exported {len(rows)} tasks to {target}\")\n+    logger.info(\"exported %d tasks to %s\", len(rows), target)\n     return len(rows)",
+    "ticket_ref": "TICKET-008"
   }
 ]

@@ -1,11 +1,24 @@
 [
   {
     "id": "N1",
-    "category": "spec",
-    "severity": "med",
+    "category": "style",
+    "severity": "low",
     "file": "taskboard/storage.py",
-    "line": 80,
-    "claim": "missing id fails silently",
+    "line": 106,
+    "claim": "delete_completed binds 1 as a parameter for a constant; DELETE FROM tasks WHERE done = 1 reads better and is equally safe.",
+    "test_file": "",
+    "test_status": "not_run",
+    "test_output": "",
+    "fix_diff": null,
+    "ticket_ref": null
+  },
+  {
+    "id": "N2",
+    "category": "style",
+    "severity": "low",
+    "file": "taskboard/service.py",
+    "line": 49,
+    "claim": "delete_task documents ValueError but not TaskNotFoundError, which the repository can still raise.",
     "test_file": "",
     "test_status": "not_run",
     "test_output": "",
