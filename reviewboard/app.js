@@ -196,7 +196,7 @@ function playFeatured(){
 }
 
 /* ---------- scores ---------- */
-const WHO = {ours:['Proof-Carrying','our Bob mode'], bob:['Bob built-in','default review'], naive:['Naive LLM','one-line prompt']};
+const WHO = {ours:['Proof-Carrying','our Bob mode'], naive:['Single-pass LLM','no spec, no tests']};
 const EXPL = {
   recall:'Share of the hidden bugs each reviewer found.',
   precision:'Share of each reviewer’s comments that were about real bugs.',
@@ -224,7 +224,7 @@ function paintSide(){
       n ? '🚨'.repeat(Math.min(n,14)) + (n>14?' +'+(n-14):'') + ` <span class="mono" style="font-size:13px;font-weight:700">${n}</span>` : '<span class="zero">none 🎉</span>'}</div></div>`;
   }).join('');
   $('#sizes').innerHTML = DATA.sizeBuckets.map(s => `<div class="srow"><div class="lb">${s.size}<small>${s.lines}</small></div>
-    <div class="sbars">${['ours','bob','naive'].map(k => `<div class="sbar ${k}"><i data-w="${s[k]}"></i><span>${s[k]}%</span></div>`).join('')}</div></div>`).join('');
+    <div class="sbars">${['ours','naive'].map(k => `<div class="sbar ${k}"><i data-w="${s[k]}"></i><span>${s[k]}%</span></div>`).join('')}</div></div>`).join('');
 }
 function growSizes(){ document.querySelectorAll('.sbar i').forEach(i => i.style.width = i.dataset.w + '%'); }
 
